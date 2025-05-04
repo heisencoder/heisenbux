@@ -1,10 +1,9 @@
 """Script to download data for popular Vanguard funds."""
 
 import subprocess
-from typing import List
 
 
-def download_funds(funds: List[str]) -> None:
+def download_funds(funds: list[str]) -> None:
     """Download data for a list of Vanguard funds."""
     for fund in funds:
         print(f"\nDownloading data for {fund}...")
@@ -13,7 +12,7 @@ def download_funds(funds: List[str]) -> None:
         )
 
 
-def generate_plots(funds: List[str]) -> None:
+def generate_plots(funds: list[str]) -> None:
     """Generate plots for a list of Vanguard funds."""
     for fund in funds:
         print(f"\nGenerating plot for {fund}...")

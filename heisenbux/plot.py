@@ -1,8 +1,9 @@
 """Functions to assist with plotting"""
 
-from matplotlib import pyplot
-import pandas as pd
 from pathlib import Path
+
+import pandas as pd
+from matplotlib import pyplot
 
 
 def save_plot(df: pd.DataFrame, ticker: str):

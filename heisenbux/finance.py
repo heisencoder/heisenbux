@@ -1,10 +1,10 @@
 """Wrapper around yfinance with caching support"""
 
-import pandas as pd
 from datetime import datetime, timedelta
-import yfinance as yf
-
 from pathlib import Path
+
+import pandas as pd
+import yfinance as yf
 
 
 def get_ticker_data(ticker: str, force_download: bool = False) -> pd.DataFrame:

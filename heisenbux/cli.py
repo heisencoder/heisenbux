@@ -2,8 +2,7 @@
 
 import click
 
-from heisenbux import plot
-from heisenbux import finance
+from heisenbux import finance, plot
 
 
 @click.command()
