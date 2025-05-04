@@ -9,7 +9,7 @@ from pathlib import Path
 
 def get_ticker_data(ticker: str, force_download: bool = False) -> pd.DataFrame:
     # Create output directories if they don't exist
-    cache_dir = Path('cache')
+    cache_dir = Path("cache")
     cache_dir.mkdir(parents=True, exist_ok=True)
 
     # Check for cached data

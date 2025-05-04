@@ -8,14 +8,19 @@ def download_funds(funds: List[str]) -> None:
     """Download data for a list of Vanguard funds."""
     for fund in funds:
         print(f"\nDownloading data for {fund}...")
-        subprocess.run(["poetry", "run", "heisenbux", fund, "--no-show-plot"], check=True)
+        subprocess.run(
+            ["poetry", "run", "heisenbux", fund, "--no-show-plot"], check=True
+        )
 
 
 def generate_plots(funds: List[str]) -> None:
     """Generate plots for a list of Vanguard funds."""
     for fund in funds:
         print(f"\nGenerating plot for {fund}...")
-        subprocess.run(["poetry", "run", "heisenbux", fund, "--no-force-download", "--show-plot"], check=True)
+        subprocess.run(
+            ["poetry", "run", "heisenbux", fund, "--no-force-download", "--show-plot"],
+            check=True,
+        )
 
 
 if __name__ == "__main__":
@@ -28,7 +33,7 @@ if __name__ == "__main__":
         "VGT",  # Vanguard Information Technology ETF
         "VYM",  # Vanguard High Dividend Yield ETF
         "VUG",  # Vanguard Growth ETF
-        "VB",   # Vanguard Small-Cap ETF
+        "VB",  # Vanguard Small-Cap ETF
         "VTV",  # Vanguard Value ETF
     ]
 
