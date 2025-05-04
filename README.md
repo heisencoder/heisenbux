@@ -41,6 +41,18 @@ To run tests:
 poetry run pytest
 ```
 
+To run code formatting and quality checks:
+```bash
+# Check for issues
+poetry run ruff check .
+
+# Fix automatically fixable issues
+poetry run ruff check . --fix
+
+# Format code
+poetry run ruff format .
+```
+
 ## License
 
 This project is licensed under the MIT License.
