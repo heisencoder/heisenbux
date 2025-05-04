@@ -1,6 +1,22 @@
 # Heisenbux
 
-A Python package for managing cryptocurrency transactions.
+A Python package for managing investment data and analysis, with support for stocks, ETFs, and other securities.
+
+## Project Structure
+
+```
+heisenbux/
+├── heisenbux/           # Source code directory
+│   ├── __init__.py     # Package initialization
+│   ├── cli.py          # Command-line interface
+│   └── download_vanguard.py  # Vanguard fund data downloader
+├── tests/              # Test files
+├── cache/              # Cached stock data (CSV files)
+├── graphs/             # Generated price plots
+├── pyproject.toml      # Poetry configuration
+├── README.md           # This file
+└── .gitignore          # Git ignore rules
+```
 
 ## Installation
 

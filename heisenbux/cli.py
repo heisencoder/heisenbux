@@ -21,8 +21,8 @@ def main(ticker: str, show_plot: bool, force_download: bool):
     """
     try:
         # Create output directories if they don't exist
-        cache_dir = Path('heisenbux/cache')
-        graphs_dir = Path('heisenbux/graphs')
+        cache_dir = Path('cache')
+        graphs_dir = Path('graphs')
         cache_dir.mkdir(parents=True, exist_ok=True)
         graphs_dir.mkdir(parents=True, exist_ok=True)
 
