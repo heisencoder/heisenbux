@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "heisenbux"
+version = "0.1.0"
+description = "A Python package for managing cryptocurrency transactions"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+yfinance = "^0.2.58"
+click = "^8.1.8"
+pandas = "^2.2.3"
+matplotlib = "^3.10.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+heisenbux = "heisenbux.cli:main"
