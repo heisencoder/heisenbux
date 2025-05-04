@@ -2,33 +2,12 @@
 
 import click
 import yfinance as yf
-import matplotlib.pyplot as plt
 import pandas as pd
 from datetime import datetime, timedelta
 from pathlib import Path
 
+from heisenbux import plot
 
-def save_plot(df: pd.DataFrame, ticker: str, graphs_dir: Path):
-    # Create and display the plot
-    plt.figure(figsize=(12, 6))
-    plt.plot(df.index, df['Close'], label='Closing Price')
-    plt.title(f'{ticker.upper()} Closing Prices (Last Year)')
-    plt.xlabel('Date')
-    plt.ylabel('Price (USD)')
-    plt.grid(True)
-    plt.legend()
-
-    # Rotate x-axis labels for better readability
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-
-    # Save the plot to graphs directory
-    plot_file = graphs_dir / f"{ticker.upper()}_plot.png"
-    plt.savefig(plot_file)
-    click.echo(f"Plot saved to {plot_file}")
-
-    # Show the plot
-    plt.show()
 
 
 @click.command()
@@ -73,7 +52,7 @@ def main(ticker: str, show_plot: bool, force_download: bool):
         click.echo(f"Data saved to {cache_file}")
 
     if show_plot:
-        save_plot(df, ticker, graphs_dir)
+        plot.save_plot(df, ticker, graphs_dir)
 
 
 if __name__ == '__main__':
