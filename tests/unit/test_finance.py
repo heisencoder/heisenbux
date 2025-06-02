@@ -22,12 +22,12 @@ class TestGetTickerData:
     """Test cases for get_ticker_data function."""
 
     @pytest.fixture
-    def mock_yfinance(self):
+    def mock_yfinance(self) -> Mock:
         """Create a mock yfinance Ticker object."""
         return create_mock_ticker()
 
     def test_get_ticker_data_downloads_fresh_data(
-        self, mock_yfinance, temp_directory: Path, monkeypatch: pytest.MonkeyPatch
+        self, mock_yfinance: Mock, temp_directory: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Test that get_ticker_data downloads fresh data when cache doesn't exist."""
         monkeypatch.chdir(temp_directory)
@@ -66,7 +66,7 @@ class TestGetTickerData:
         assert_valid_dataframe(df, ALL_PRICE_COLUMNS, min_rows=len(sample_df))
 
     def test_get_ticker_data_force_download(
-        self, mock_yfinance, temp_directory: Path, monkeypatch: pytest.MonkeyPatch
+        self, mock_yfinance: Mock, temp_directory: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Test that force_download bypasses cache."""
         monkeypatch.chdir(temp_directory)
