@@ -3,6 +3,7 @@
 import sys
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import pytest
 
 # Add the project root to the Python path
@@ -13,8 +14,6 @@ sys.path.insert(0, str(project_root))
 @pytest.fixture(autouse=True)
 def reset_matplotlib() -> None:
     """Reset matplotlib state between tests to avoid interference."""
-    import matplotlib.pyplot as plt
-
     plt.close("all")
 
 

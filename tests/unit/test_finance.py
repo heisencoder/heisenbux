@@ -100,27 +100,25 @@ class TestGetTickerData:
     def test_get_ticker_data_handles_download_error(
         self, temp_cache_dir: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """Test that get_ticker_data handles download errors gracefully."""
+        """Test that get_ticker_data propagates download errors."""
         monkeypatch.chdir(temp_cache_dir)
 
         mock_ticker = Mock()
-        mock_ticker.history.side_effect = Exception("Network error")
+        mock_ticker.history.side_effect = RuntimeError("Network error")
 
         with patch("yfinance.Ticker", return_value=mock_ticker):
-            df = get_ticker_data(SAMPLE_TICKER)
-
-        assert df is None
+            with pytest.raises(RuntimeError, match="Network error"):
+                get_ticker_data(SAMPLE_TICKER)
 
     def test_get_ticker_data_handles_empty_response(
         self, temp_cache_dir: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """Test that get_ticker_data handles empty responses."""
+        """Test that get_ticker_data raises ValueError for empty responses."""
         monkeypatch.chdir(temp_cache_dir)
 
         mock_ticker = Mock()
         mock_ticker.history.return_value = pd.DataFrame()
 
         with patch("yfinance.Ticker", return_value=mock_ticker):
-            df = get_ticker_data(SAMPLE_TICKER)
-
-        assert df is None
+            with pytest.raises(ValueError, match="No data found for ticker"):
+                get_ticker_data(SAMPLE_TICKER)

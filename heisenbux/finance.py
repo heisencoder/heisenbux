@@ -7,7 +7,7 @@ import pandas as pd
 import yfinance as yf
 
 
-def get_ticker_data(ticker: str, force_download: bool = False) -> pd.DataFrame | None:
+def get_ticker_data(ticker: str, force_download: bool = False) -> pd.DataFrame:
     """Fetch ticker data from yfinance with caching support.
 
     Args:
@@ -15,7 +15,11 @@ def get_ticker_data(ticker: str, force_download: bool = False) -> pd.DataFrame |
         force_download: If True, download fresh data even if cached data exists
 
     Returns:
-        DataFrame with stock data or None if no data found
+        DataFrame with stock data
+        
+    Raises:
+        ValueError: If no data found for the ticker
+        Exception: If there's an error fetching data
     """
     # Create output directories if they don't exist
     cache_dir = Path("cache")
@@ -34,16 +38,11 @@ def get_ticker_data(ticker: str, force_download: bool = False) -> pd.DataFrame |
 
         # Fetch data
         print(f"Fetching data for {ticker}...")
-        try:
-            stock = yf.Ticker(ticker)
-            df = stock.history(start=start_date, end=end_date)
-        except Exception as e:
-            print(f"Error fetching data for {ticker}: {e}")
-            return None
+        stock = yf.Ticker(ticker)
+        df = stock.history(start=start_date, end=end_date)
 
         if df.empty:
-            print(f"No data found for ticker {ticker}")
-            return None
+            raise ValueError(f"No data found for ticker {ticker}")
 
         # Save to CSV in cache directory
         df.to_csv(cache_file)

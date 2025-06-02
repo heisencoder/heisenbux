@@ -50,9 +50,8 @@ class TestDataSourceIntegration:
             mock_ticker = mock_ticker_class.return_value
             mock_ticker.history.side_effect = ConnectionError("Network error")
 
-            df = get_ticker_data("TEST", force_download=True)
-
-            assert df is None
+            with pytest.raises(ConnectionError, match="Network error"):
+                get_ticker_data("TEST", force_download=True)
 
     def test_cache_integration(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch

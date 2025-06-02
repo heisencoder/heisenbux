@@ -81,11 +81,12 @@ class TestCLI:
         self, mock_get_ticker: Mock, runner: CliRunner
     ) -> None:
         """Test that CLI handles download failures gracefully."""
-        mock_get_ticker.return_value = None
+        mock_get_ticker.side_effect = ValueError("No data found for ticker TEST")
 
         result = runner.invoke(main, [SAMPLE_TICKER])
 
-        assert result.exit_code == 0  # CLI returns 0 even on download failure
+        assert result.exit_code == 1  # CLI returns 1 on Abort
+        assert "Error: No data found for ticker TEST" in result.output
 
     def test_cli_requires_ticker_argument(self, runner: CliRunner) -> None:
         """Test that CLI requires a ticker argument."""

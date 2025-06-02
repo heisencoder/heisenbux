@@ -57,10 +57,12 @@ poetry run ruff format .         # Format code
 - Do not use string or numeric literals. Instead, use constants, enums, or similar structures. If a given constant is used in two or more Python modules, then extract this constant into a separate module that only contains constants, enums, and similar configuration.
 - Do not duplicate important business logic. Instead, extract this common business logic into helper functions.
 - Avoid duplication in tests. Scan tests for similar patterns and create test fixtures and helper functions to encapsulate this duplication.
+- Never catch overly broad exceptions like `Exception`. Catch specific exceptions or let them propagate.
+- Always put import statements at the top of the file, after the module docstring but before any other code.
 
 ## Important Conventions
 
-- **Python Version**: 3.11+
+- **Python Version**: 3.12+
 - **Package Manager**: Poetry
 - **Code Style**:
   - Python: Follow the [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html)
