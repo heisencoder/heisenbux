@@ -23,6 +23,7 @@ hypothesis = "^6.9.0"
 ruff = "^0.3.7"
 types-click = "^7.1.8"
 pandas-stubs = "^2.2.3.250527"
+taskipy = "^1.14.1"
 
 [build-system]
 requires = ["poetry-core"]
@@ -30,6 +31,16 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 heisenbux = "heisenbux.cli:main"
+
+[tool.taskipy.tasks]
+test = "pytest --cov=heisenbux --cov-report=xml --cov-report=term-missing"
+lint = "ruff check ."
+format = "ruff format ."
+format-check = "ruff format . --check"
+type-check = "mypy ."
+security = "bandit -r heisenbux/"
+check-all = "task lint && task format-check && task type-check && task security && task test"
+fix = "ruff check . --fix && ruff format ."
 
 [tool.ruff]
 # Same as Black.

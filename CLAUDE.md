@@ -29,12 +29,26 @@ poetry run heisenbux TICKER --no-show-plot  # Download without display
 poetry run heisenbux TICKER --force-download  # Force fresh download
 
 # Run tests
-poetry run pytest
+poetry run pytest                # Basic test run
+poetry run task test             # Test with coverage
+poetry run task check-all        # Run all CI checks locally
 
-# Linting and formatting
-poetry run ruff check .          # Check for issues
-poetry run ruff check . --fix    # Auto-fix issues
-poetry run ruff format .         # Format code
+# Individual checks (using taskipy)
+poetry run task lint             # Check for linting issues
+poetry run task format-check     # Check code formatting
+poetry run task type-check       # Run mypy type checking
+poetry run task security         # Run security checks
+poetry run task fix              # Auto-fix issues and format
+
+# Alternative: Using make
+make check-all                   # Run all CI checks
+make test                        # Test with coverage
+make lint                        # Linting
+make type-check                  # Type checking
+make security                    # Security checks
+
+# Alternative: Direct script
+./scripts/check_all.sh           # Run all checks like CI
 ```
 
 ### Claude development methodology
