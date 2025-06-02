@@ -7,6 +7,8 @@ import pytest
 from click.testing import CliRunner
 
 from heisenbux.cli import main
+from heisenbux.constants import EXIT_ERROR, EXIT_USAGE_ERROR
+from tests.constants import ERROR_PREFIX, MISSING_TICKER_ERROR, TEST_TICKER_AAPL_LOWER
 from tests.fixtures.sample_data import SAMPLE_TICKER, create_sample_dataframe
 
 
@@ -85,17 +87,16 @@ class TestCLI:
 
         result = runner.invoke(main, [SAMPLE_TICKER])
 
-        assert result.exit_code == 1  # CLI returns 1 on Abort
-        assert "Error: No data found for ticker TEST" in result.output
+        assert result.exit_code == EXIT_ERROR  # CLI returns 1 on Abort
+        assert f"{ERROR_PREFIX}No data found for ticker TEST" in result.output
 
     def test_cli_requires_ticker_argument(self, runner: CliRunner) -> None:
         """Test that CLI requires a ticker argument."""
         result = runner.invoke(main, [])
 
         # Click returns exit code 2 for missing required arguments
-        missing_argument_exit_code = 2
-        assert result.exit_code == missing_argument_exit_code
-        assert "Missing argument 'TICKER'" in result.output
+        assert result.exit_code == EXIT_USAGE_ERROR
+        assert MISSING_TICKER_ERROR in result.output
 
     @patch("heisenbux.plot.save_plot")
     @patch("heisenbux.finance.get_ticker_data")
@@ -109,8 +110,8 @@ class TestCLI:
         """Test that CLI converts ticker to uppercase."""
         mock_get_ticker.return_value = mock_data
 
-        result = runner.invoke(main, ["aapl"])
+        result = runner.invoke(main, [TEST_TICKER_AAPL_LOWER])
 
         assert result.exit_code == 0
-        mock_get_ticker.assert_called_once_with("aapl", False)
-        mock_plot.assert_called_once_with(mock_data, "aapl")
+        mock_get_ticker.assert_called_once_with(TEST_TICKER_AAPL_LOWER, False)
+        mock_plot.assert_called_once_with(mock_data, TEST_TICKER_AAPL_LOWER)

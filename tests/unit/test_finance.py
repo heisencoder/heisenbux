@@ -1,65 +1,60 @@
 """Unit tests for finance module."""
 
-import tempfile
-from collections.abc import Generator
 from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pandas as pd
 import pytest
 
+from heisenbux.constants import (
+    ALL_PRICE_COLUMNS,
+    CACHE_DIR,
+    CLOSE_COLUMN,
+    CSV_EXTENSION,
+)
 from heisenbux.finance import get_ticker_data
-from tests.fixtures.sample_data import SAMPLE_TICKER, create_sample_dataframe
+from tests.constants import TEST_DATE_2020, TEST_PERIODS
+from tests.fixtures.sample_data import SAMPLE_TICKER
+from tests.helpers import assert_valid_dataframe, create_mock_ticker
 
 
 class TestGetTickerData:
     """Test cases for get_ticker_data function."""
 
     @pytest.fixture
-    def mock_yfinance(self) -> Mock:
+    def mock_yfinance(self):
         """Create a mock yfinance Ticker object."""
-        mock_ticker = Mock()
-        mock_ticker.history.return_value = create_sample_dataframe()
-        return mock_ticker
-
-    @pytest.fixture
-    def temp_cache_dir(self) -> Generator[Path, None, None]:
-        """Create a temporary cache directory."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            yield Path(tmpdir)
+        return create_mock_ticker()
 
     def test_get_ticker_data_downloads_fresh_data(
-        self, mock_yfinance: Mock, temp_cache_dir: Path, monkeypatch: pytest.MonkeyPatch
+        self, mock_yfinance, temp_directory: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Test that get_ticker_data downloads fresh data when cache doesn't exist."""
-        monkeypatch.chdir(temp_cache_dir)
+        monkeypatch.chdir(temp_directory)
 
         with patch("yfinance.Ticker", return_value=mock_yfinance):
             df = get_ticker_data(SAMPLE_TICKER)
 
-        assert df is not None
-        assert isinstance(df, pd.DataFrame)
-        assert len(df) > 0
-        assert all(
-            col in df.columns for col in ["Open", "High", "Low", "Close", "Volume"]
-        )
+        assert_valid_dataframe(df, ALL_PRICE_COLUMNS)
 
         # Check that cache file was created
-        cache_file = temp_cache_dir / "cache" / f"{SAMPLE_TICKER}.csv"
+        cache_file = temp_directory / CACHE_DIR / f"{SAMPLE_TICKER}{CSV_EXTENSION}"
         assert cache_file.exists()
 
     def test_get_ticker_data_uses_cache(
-        self, temp_cache_dir: Path, monkeypatch: pytest.MonkeyPatch
+        self, temp_directory: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Test that get_ticker_data uses cached data when available."""
-        monkeypatch.chdir(temp_cache_dir)
+        monkeypatch.chdir(temp_directory)
 
         # Create cache directory and file
-        cache_dir = temp_cache_dir / "cache"
+        cache_dir = temp_directory / CACHE_DIR
         cache_dir.mkdir()
-        cache_file = cache_dir / f"{SAMPLE_TICKER}.csv"
+        cache_file = cache_dir / f"{SAMPLE_TICKER}{CSV_EXTENSION}"
 
         # Save sample data to cache
+        from tests.fixtures.sample_data import create_sample_dataframe
+
         sample_df = create_sample_dataframe()
         sample_df.to_csv(cache_file)
 
@@ -68,40 +63,36 @@ class TestGetTickerData:
             df = get_ticker_data(SAMPLE_TICKER)
 
         mock_ticker.assert_not_called()
-        assert df is not None
-        assert isinstance(df, pd.DataFrame)
-        assert len(df) == len(sample_df)
+        assert_valid_dataframe(df, ALL_PRICE_COLUMNS, min_rows=len(sample_df))
 
     def test_get_ticker_data_force_download(
-        self, mock_yfinance: Mock, temp_cache_dir: Path, monkeypatch: pytest.MonkeyPatch
+        self, mock_yfinance, temp_directory: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Test that force_download bypasses cache."""
-        monkeypatch.chdir(temp_cache_dir)
+        monkeypatch.chdir(temp_directory)
 
         # Create cache directory and file
-        cache_dir = temp_cache_dir / "cache"
+        cache_dir = temp_directory / CACHE_DIR
         cache_dir.mkdir()
-        cache_file = cache_dir / f"{SAMPLE_TICKER}.csv"
+        cache_file = cache_dir / f"{SAMPLE_TICKER}{CSV_EXTENSION}"
 
         # Save old data to cache
         old_df = pd.DataFrame(
-            {"Close": [1, 2, 3]}, index=pd.date_range("2020-01-01", periods=3)
+            {CLOSE_COLUMN: [1, 2, 3]},
+            index=pd.date_range(TEST_DATE_2020, periods=TEST_PERIODS),
         )
         old_df.to_csv(cache_file)
 
         with patch("yfinance.Ticker", return_value=mock_yfinance):
             df = get_ticker_data(SAMPLE_TICKER, force_download=True)
 
-        assert df is not None
-        # New data should have more rows than old cached data
-        min_expected_rows = 3
-        assert len(df) > min_expected_rows
+        assert_valid_dataframe(df, ALL_PRICE_COLUMNS, min_rows=TEST_PERIODS + 1)
 
     def test_get_ticker_data_handles_download_error(
-        self, temp_cache_dir: Path, monkeypatch: pytest.MonkeyPatch
+        self, temp_directory: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Test that get_ticker_data propagates download errors."""
-        monkeypatch.chdir(temp_cache_dir)
+        monkeypatch.chdir(temp_directory)
 
         mock_ticker = Mock()
         mock_ticker.history.side_effect = RuntimeError("Network error")
@@ -111,10 +102,10 @@ class TestGetTickerData:
                 get_ticker_data(SAMPLE_TICKER)
 
     def test_get_ticker_data_handles_empty_response(
-        self, temp_cache_dir: Path, monkeypatch: pytest.MonkeyPatch
+        self, temp_directory: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Test that get_ticker_data raises ValueError for empty responses."""
-        monkeypatch.chdir(temp_cache_dir)
+        monkeypatch.chdir(temp_directory)
 
         mock_ticker = Mock()
         mock_ticker.history.return_value = pd.DataFrame()

@@ -1,10 +1,12 @@
 """Wrapper around yfinance with caching support"""
 
 from datetime import datetime, timedelta
-from pathlib import Path
 
 import pandas as pd
 import yfinance as yf
+
+from heisenbux.constants import CACHE_DIR, CSV_EXTENSION, DEFAULT_DAYS_LOOKBACK
+from heisenbux.utils import build_file_path, ensure_directory_exists
 
 
 def get_ticker_data(ticker: str, force_download: bool = False) -> pd.DataFrame:
@@ -22,11 +24,10 @@ def get_ticker_data(ticker: str, force_download: bool = False) -> pd.DataFrame:
         Exception: If there's an error fetching data
     """
     # Create output directories if they don't exist
-    cache_dir = Path("cache")
-    cache_dir.mkdir(parents=True, exist_ok=True)
+    cache_dir = ensure_directory_exists(CACHE_DIR)
 
     # Check for cached data
-    cache_file = cache_dir / f"{ticker.upper()}.csv"
+    cache_file = build_file_path(cache_dir, ticker, CSV_EXTENSION)
 
     if cache_file.exists() and not force_download:
         print(f"Using cached data from {cache_file}")
@@ -34,7 +35,7 @@ def get_ticker_data(ticker: str, force_download: bool = False) -> pd.DataFrame:
     else:
         # Calculate date range
         end_date = datetime.now()
-        start_date = end_date - timedelta(days=365)
+        start_date = end_date - timedelta(days=DEFAULT_DAYS_LOOKBACK)
 
         # Fetch data
         print(f"Fetching data for {ticker}...")

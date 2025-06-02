@@ -1,7 +1,16 @@
 """Unit tests for download_vanguard module."""
 
+import subprocess
 from unittest.mock import Mock, call, patch
 
+import pytest
+
+from heisenbux.constants import (
+    NO_FORCE_DOWNLOAD_FLAG,
+    NO_SHOW_PLOT_FLAG,
+    POETRY_RUN_HEISENBUX,
+    SHOW_PLOT_FLAG,
+)
 from heisenbux.download_vanguard import download_funds, generate_plots
 from tests.fixtures.sample_data import VANGUARD_TEST_FUNDS
 
@@ -19,7 +28,7 @@ class TestDownloadVanguardFunds:
 
         # Check the calls were made with correct arguments
         expected_calls = [
-            call(["poetry", "run", "heisenbux", fund, "--no-show-plot"], check=True)
+            call([*POETRY_RUN_HEISENBUX, fund, NO_SHOW_PLOT_FLAG], check=True)
             for fund in VANGUARD_TEST_FUNDS
         ]
         mock_run.assert_has_calls(expected_calls, any_order=False)
@@ -35,14 +44,7 @@ class TestDownloadVanguardFunds:
         # Check the calls were made with correct arguments
         expected_calls = [
             call(
-                [
-                    "poetry",
-                    "run",
-                    "heisenbux",
-                    fund,
-                    "--no-force-download",
-                    "--show-plot",
-                ],
+                [*POETRY_RUN_HEISENBUX, fund, NO_FORCE_DOWNLOAD_FLAG, SHOW_PLOT_FLAG],
                 check=True,
             )
             for fund in VANGUARD_TEST_FUNDS
@@ -74,11 +76,8 @@ class TestDownloadVanguardFunds:
     @patch("heisenbux.download_vanguard.subprocess.run")
     def test_subprocess_failure_propagates(self, mock_run: Mock) -> None:
         """Test that subprocess failures are propagated."""
-        mock_run.side_effect = Exception("Subprocess failed")
+        mock_run.side_effect = subprocess.CalledProcessError(1, "heisenbux")
 
         # The function should raise the exception
-        try:
+        with pytest.raises(subprocess.CalledProcessError):
             download_funds(["VTI"])
-            raise AssertionError("Expected exception to be raised")
-        except Exception as e:
-            assert str(e) == "Subprocess failed"
