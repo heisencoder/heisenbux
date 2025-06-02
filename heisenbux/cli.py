@@ -27,8 +27,8 @@ def main(ticker: str, show_plot: bool, force_download: bool) -> None:
         df = finance.get_ticker_data(ticker, force_download)
     except ValueError as e:
         click.echo(f"Error: {e}", err=True)
-        raise click.Abort()
-    
+        raise click.Abort() from e
+
     if show_plot:
         plot.save_plot(df, ticker)
 

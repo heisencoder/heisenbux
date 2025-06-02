@@ -16,7 +16,7 @@ def get_ticker_data(ticker: str, force_download: bool = False) -> pd.DataFrame:
 
     Returns:
         DataFrame with stock data
-        
+
     Raises:
         ValueError: If no data found for the ticker
         Exception: If there's an error fetching data

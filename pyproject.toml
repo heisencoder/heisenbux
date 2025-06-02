@@ -32,13 +32,11 @@ build-backend = "poetry.core.masonry.api"
 heisenbux = "heisenbux.cli:main"
 
 [tool.ruff]
-# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
-select = ["E", "F", "I", "N", "W", "B", "UP", "PL", "RUF"]
-ignore = []
+# Same as Black.
+line-length = 88
 
-# Allow autofix for all enabled rules (when `--fix`) is provided.
-fixable = ["ALL"]
-unfixable = []
+# Assume Python 3.12
+target-version = "py312"
 
 # Exclude a variety of commonly ignored directories.
 exclude = [
@@ -52,17 +50,20 @@ exclude = [
     "graphs",
 ]
 
-# Same as Black.
-line-length = 88
+[tool.ruff.lint]
+# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
+select = ["E", "F", "I", "N", "W", "B", "UP", "PL", "RUF"]
+ignore = []
 
-# Assume Python 3.12
-target-version = "py312"
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["heisenbux"]
 
 [tool.mypy]
