@@ -1,7 +1,6 @@
 """Command line interface for Heisenbux."""
 
 import click
-import pandas as pd
 
 from heisenbux import finance, plot
 
@@ -24,7 +23,7 @@ def main(ticker: str, show_plot: bool, force_download: bool) -> None:
     Args:
         ticker: The stock ticker symbol (e.g., AAPL, GOOGL)
     """
-    df: pd.DataFrame | None = finance.get_ticker_data(ticker, force_download)
+    df = finance.get_ticker_data(ticker, force_download)
 
     if df is None:
         return

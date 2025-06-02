@@ -18,24 +18,24 @@ def get_ticker_data(ticker: str, force_download: bool = False) -> pd.DataFrame |
         DataFrame with stock data or None if no data found
     """
     # Create output directories if they don't exist
-    cache_dir: Path = Path("cache")
+    cache_dir = Path("cache")
     cache_dir.mkdir(parents=True, exist_ok=True)
 
     # Check for cached data
-    cache_file: Path = cache_dir / f"{ticker.upper()}.csv"
+    cache_file = cache_dir / f"{ticker.upper()}.csv"
 
     if cache_file.exists() and not force_download:
         print(f"Using cached data from {cache_file}")
-        df: pd.DataFrame = pd.read_csv(cache_file, index_col=0, parse_dates=True)
+        df = pd.read_csv(cache_file, index_col=0, parse_dates=True)
     else:
         # Calculate date range
-        end_date: datetime = datetime.now()
-        start_date: datetime = end_date - timedelta(days=365)
+        end_date = datetime.now()
+        start_date = end_date - timedelta(days=365)
 
         # Fetch data
         print(f"Fetching data for {ticker}...")
         try:
-            stock: yf.Ticker = yf.Ticker(ticker)
+            stock = yf.Ticker(ticker)
             df = stock.history(start=start_date, end=end_date)
         except Exception as e:
             print(f"Error fetching data for {ticker}: {e}")

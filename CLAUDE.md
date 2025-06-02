@@ -71,4 +71,7 @@ poetry run ruff format .         # Format code
 - **Import Style**: isort-compatible
 - **Data Storage**: CSV files in `cache/`, PNG plots in `graphs/`
 - **API**: Uses yfinance for market data (365 days historical by default)
-- **Typing Annotations**: Add typing annotations to function signatures
+- **Type Annotations**: 
+  - Always annotate: Function signatures (parameters and return types), class attributes, module-level variables
+  - Sometimes annotate: Empty collections (e.g., `items: list[str] = []`), ambiguous `None` types (e.g., `result: str | None = None`)
+  - Rarely annotate: Local variables with obvious types (mypy can infer most local variable types)

@@ -13,7 +13,7 @@ def save_plot(df: pd.DataFrame, ticker: str) -> None:
         df: DataFrame containing stock data with 'Close' column
         ticker: Stock ticker symbol for labeling
     """
-    graphs_dir: Path = Path("graphs")
+    graphs_dir = Path("graphs")
     graphs_dir.mkdir(parents=True, exist_ok=True)
 
     # Create and display the plot
@@ -30,7 +30,7 @@ def save_plot(df: pd.DataFrame, ticker: str) -> None:
     pyplot.tight_layout()
 
     # Save the plot to graphs directory
-    plot_file: Path = graphs_dir / f"{ticker.upper()}_plot.png"
+    plot_file = graphs_dir / f"{ticker.upper()}_plot.png"
     pyplot.savefig(plot_file)
     print(f"Plot saved to {plot_file}")
 
