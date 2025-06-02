@@ -37,6 +37,27 @@ poetry run ruff check . --fix    # Auto-fix issues
 poetry run ruff format .         # Format code
 ```
 
+### Claude development methodology
+
+- Do not commit to the git `main` branch. Instead, create and commit to a feature branch.
+- Use Convention Commits for git commit messages.
+- Each Claude change must have a single purpose.
+- After editing code, make sure the linters and tests pass, and then create a git commit to the feature branch.
+- If the tests do not pass after 3 attempts, use an alternate strategy. Stop if the alternate strategy fails after 3 more attempts and then ask for help.
+- Update markdown files in the same commit as a functional change.
+- Both before and after making a functional change, looks for opportunties to perform a pure refactoring to keep the code maintainable. Put the refactoring into a separate Git commit from the functional change.
+- After completing requested work, create a GitHub pull request from the feature branch.
+- Perform a single code review on GitHub and add comments with suggested changes.
+- Resolve any comments in the pull request, if possible, and make sure GitHub Actions pass.
+- Use stacked diffs for managing multiple features, via the `git town` subcommand.
+
+### Code quality
+
+- Do not duplicate code or data. Instead, create common libraries or configuration via a refactoring commit.
+- Do not use string or numeric literals. Instead, use constants, enums, or similar structures. If a given constant is used in two or more Python modules, then extract this constant into a separate module that only contains constants, enums, and similar configuration.
+- Do not duplicate important business logic. Instead, extract this common business logic into helper functions.
+- Avoid duplication in tests. Scan tests for similar patterns and create test fixtures and helper functions to encapsulate this duplication.
+
 ## Important Conventions
 
 - **Python Version**: 3.11+
