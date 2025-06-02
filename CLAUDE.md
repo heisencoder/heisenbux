@@ -9,6 +9,7 @@ Heisenbux is a Python package for fetching and visualizing financial market data
 ## Key Architecture
 
 The codebase follows a simple modular architecture:
+
 - **CLI Layer** (`cli.py`): Entry point that handles command-line arguments and orchestrates operations
 - **Data Layer** (`finance.py`): Fetches ticker data via yfinance API and manages CSV caching in `cache/` directory
 - **Visualization Layer** (`plot.py`): Creates matplotlib plots saved to `graphs/` directory
@@ -40,8 +41,13 @@ poetry run ruff format .         # Format code
 
 - **Python Version**: 3.11+
 - **Package Manager**: Poetry
-- **Code Style**: Ruff with extensive rule set (E, F, I, N, W, B, UP, PL, RUF)
+- **Code Style**:
+  - Python: Follow the [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html)
+  - Python: Ruff with extensive rule set (E, F, I, N, W, B, UP, PL, RUF)
+  - Markdown: format with markdownlint, put a blank line after headings and before code blocks
+  - All text files: Trim trailing whitespace (enforced via .editorconfig)
 - **Line Length**: 88 characters
 - **Import Style**: isort-compatible
 - **Data Storage**: CSV files in `cache/`, PNG plots in `graphs/`
 - **API**: Uses yfinance for market data (365 days historical by default)
+- **Typing Annotations**: Add typing annotations to function signatures

@@ -4,7 +4,7 @@ A Python package for managing investment data and analysis, with support for sto
 
 ## Project Structure
 
-```
+```text
 heisenbux/
 ├── heisenbux/           # Source code directory
 │   ├── __init__.py     # Package initialization
@@ -23,11 +23,13 @@ heisenbux/
 This package uses Poetry for dependency management. To install:
 
 1. Make sure you have Poetry installed:
+
    ```bash
    pip install poetry
    ```
 
 2. Clone the repository and install dependencies:
+
    ```bash
    git clone https://github.com/yourusername/heisenbux.git
    cd heisenbux
@@ -37,11 +39,13 @@ This package uses Poetry for dependency management. To install:
 ## Development
 
 To run tests:
+
 ```bash
 poetry run pytest
 ```
 
 To run code formatting and quality checks:
+
 ```bash
 # Check for issues
 poetry run ruff check .
