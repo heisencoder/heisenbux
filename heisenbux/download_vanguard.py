@@ -23,7 +23,7 @@ def generate_plots(funds: list[str]) -> None:
 
 
 if __name__ == "__main__":
-    vanguard_funds = [
+    vanguard_funds: list[str] = [
         "VTI",  # Vanguard Total Stock Market ETF
         "VOO",  # Vanguard S&P 500 ETF
         "VXUS",  # Vanguard Total International Stock ETF

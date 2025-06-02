@@ -14,7 +14,15 @@ matplotlib = "^3.10.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.12.0"
+mypy = "^1.7.0"
+pre-commit = "^3.5.0"
+bandit = "^1.7.0"
+hypothesis = "^6.9.0"
 ruff = "^0.3.7"
+types-click = "^7.1.8"
+pandas-stubs = "^2.2.3.250527"
 
 [build-system]
 requires = ["poetry-core"]
@@ -56,3 +64,52 @@ max-complexity = 10
 
 [tool.ruff.isort]
 known-first-party = ["heisenbux"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = "yfinance.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "matplotlib.*"
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-v --cov=heisenbux --cov-report=html --cov-report=term-missing --cov-report=xml"
+
+[tool.coverage.run]
+source = ["heisenbux"]
+omit = ["*/tests/*", "*/__init__.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+
+[tool.bandit]
+exclude_dirs = ["tests", "cache", "graphs"]
+skips = []

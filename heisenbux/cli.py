@@ -1,6 +1,7 @@
 """Command line interface for Heisenbux."""
 
 import click
+import pandas as pd
 
 from heisenbux import finance, plot
 
@@ -17,13 +18,16 @@ from heisenbux import finance, plot
     default=False,
     help="Force download new data even if cached (default: False)",
 )
-def main(ticker: str, show_plot: bool, force_download: bool):
-    """Fetch the last year of daily price data for a given stock ticker and save it to a CSV file.
+def main(ticker: str, show_plot: bool, force_download: bool) -> None:
+    """Fetch daily price data for a stock ticker and save it to a CSV file.
 
     Args:
         ticker: The stock ticker symbol (e.g., AAPL, GOOGL)
     """
-    df = finance.get_ticker_data(ticker, force_download)
+    df: pd.DataFrame | None = finance.get_ticker_data(ticker, force_download)
+
+    if df is None:
+        return
 
     if show_plot:
         plot.save_plot(df, ticker)
