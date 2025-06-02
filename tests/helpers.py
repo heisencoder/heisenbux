@@ -1,37 +1,26 @@
 """Helper functions for tests."""
 
-import tempfile
-from collections.abc import Generator
-from pathlib import Path
 from unittest.mock import Mock
 
 import pandas as pd
-import pytest
 
-from tests.fixtures.sample_data import create_sample_dataframe
-
-
-@pytest.fixture
-def temp_directory() -> Generator[Path, None, None]:
-    """Create a temporary directory for testing."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        yield Path(tmpdir)
+from tests.fixtures import sample_data
 
 
-def create_mock_ticker(return_value: pd.DataFrame | None = None) -> Mock:
+def create_mock_ticker(dataframe_response: pd.DataFrame | None = None) -> Mock:
     """Create a mock yfinance Ticker object.
 
     Args:
-        return_value: DataFrame to return from history() call.
-                     If None, uses create_sample_dataframe()
+        dataframe_response: DataFrame to return from history() call.
+                           If None, uses create_sample_dataframe()
 
     Returns:
         Mock ticker object with history method configured
     """
     mock_ticker = Mock()
-    if return_value is None:
-        return_value = create_sample_dataframe()
-    mock_ticker.history.return_value = return_value
+    if dataframe_response is None:
+        dataframe_response = sample_data.create_sample_dataframe()
+    mock_ticker.history.return_value = dataframe_response
     return mock_ticker
 
 

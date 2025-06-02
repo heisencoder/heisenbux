@@ -5,8 +5,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import yfinance as yf
 
-from heisenbux.constants import CACHE_DIR, CSV_EXTENSION, DEFAULT_DAYS_LOOKBACK
-from heisenbux.utils import build_file_path, ensure_directory_exists
+from heisenbux import constants, directory_utils
 
 
 def get_ticker_data(ticker: str, force_download: bool = False) -> pd.DataFrame:
@@ -24,10 +23,10 @@ def get_ticker_data(ticker: str, force_download: bool = False) -> pd.DataFrame:
         Exception: If there's an error fetching data
     """
     # Create output directories if they don't exist
-    cache_dir = ensure_directory_exists(CACHE_DIR)
+    cache_dir = directory_utils.ensure_directory_exists(constants.Directories.CACHE)
 
     # Check for cached data
-    cache_file = build_file_path(cache_dir, ticker, CSV_EXTENSION)
+    cache_file = directory_utils.build_file_path(cache_dir, ticker, constants.FileExtensions.CSV)
 
     if cache_file.exists() and not force_download:
         print(f"Using cached data from {cache_file}")
@@ -35,7 +34,7 @@ def get_ticker_data(ticker: str, force_download: bool = False) -> pd.DataFrame:
     else:
         # Calculate date range
         end_date = datetime.now()
-        start_date = end_date - timedelta(days=DEFAULT_DAYS_LOOKBACK)
+        start_date = end_date - timedelta(days=constants.DEFAULT_DAYS_LOOKBACK)
 
         # Fetch data
         print(f"Fetching data for {ticker}...")

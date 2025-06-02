@@ -2,18 +2,18 @@
 
 import click
 
-from heisenbux import finance, plot
+from heisenbux import constants, finance, plot
 
 
 @click.command()
 @click.argument("ticker")
 @click.option(
-    "--show-plot/--no-show-plot",
+    f"{constants.CLIOptions.SHOW_PLOT}/{constants.CLIOptions.NO_SHOW_PLOT}",
     default=True,
     help="Whether to display the price plot (default: True)",
 )
 @click.option(
-    "--force-download/--no-force-download",
+    f"{constants.CLIOptions.FORCE_DOWNLOAD}/{constants.CLIOptions.NO_FORCE_DOWNLOAD}",
     default=False,
     help="Force download new data even if cached (default: False)",
 )

@@ -6,10 +6,9 @@ import pandas as pd
 import pytest
 from click.testing import CliRunner
 
-from heisenbux.cli import main
-from heisenbux.constants import EXIT_ERROR, EXIT_USAGE_ERROR
-from tests.constants import ERROR_PREFIX, MISSING_TICKER_ERROR, TEST_TICKER_AAPL_LOWER
-from tests.fixtures.sample_data import SAMPLE_TICKER, create_sample_dataframe
+from heisenbux import cli, constants
+from tests import constants as test_constants
+from tests.fixtures import sample_data
 
 
 class TestCLI:
@@ -23,7 +22,7 @@ class TestCLI:
     @pytest.fixture
     def mock_data(self) -> pd.DataFrame:
         """Get mock data for testing."""
-        return create_sample_dataframe()
+        return sample_data.create_sample_dataframe()
 
     @patch("heisenbux.plot.save_plot")
     @patch("heisenbux.finance.get_ticker_data")
@@ -37,12 +36,12 @@ class TestCLI:
         """Test that CLI downloads data and creates plot."""
         mock_get_ticker.return_value = mock_data
 
-        result = runner.invoke(main, [SAMPLE_TICKER])
+        result = runner.invoke(cli.main, [sample_data.SAMPLE_TICKER])
 
         assert result.exit_code == 0
 
-        mock_get_ticker.assert_called_once_with(SAMPLE_TICKER, False)
-        mock_plot.assert_called_once_with(mock_data, SAMPLE_TICKER)
+        mock_get_ticker.assert_called_once_with(sample_data.SAMPLE_TICKER, False)
+        mock_plot.assert_called_once_with(mock_data, sample_data.SAMPLE_TICKER)
 
     @patch("heisenbux.plot.save_plot")
     @patch("heisenbux.finance.get_ticker_data")
@@ -56,7 +55,7 @@ class TestCLI:
         """Test that --no-show-plot option works correctly."""
         mock_get_ticker.return_value = mock_data
 
-        result = runner.invoke(main, [SAMPLE_TICKER, "--no-show-plot"])
+        result = runner.invoke(cli.main, [sample_data.SAMPLE_TICKER, "--no-show-plot"])
 
         assert result.exit_code == 0
         mock_plot.assert_not_called()
@@ -73,10 +72,10 @@ class TestCLI:
         """Test that --force-download option works correctly."""
         mock_get_ticker.return_value = mock_data
 
-        result = runner.invoke(main, [SAMPLE_TICKER, "--force-download"])
+        result = runner.invoke(cli.main, [sample_data.SAMPLE_TICKER, "--force-download"])
 
         assert result.exit_code == 0
-        mock_get_ticker.assert_called_once_with(SAMPLE_TICKER, True)
+        mock_get_ticker.assert_called_once_with(sample_data.SAMPLE_TICKER, True)
 
     @patch("heisenbux.finance.get_ticker_data")
     def test_cli_handles_download_failure(
@@ -85,18 +84,18 @@ class TestCLI:
         """Test that CLI handles download failures gracefully."""
         mock_get_ticker.side_effect = ValueError("No data found for ticker TEST")
 
-        result = runner.invoke(main, [SAMPLE_TICKER])
+        result = runner.invoke(cli.main, [sample_data.SAMPLE_TICKER])
 
-        assert result.exit_code == EXIT_ERROR  # CLI returns 1 on Abort
-        assert f"{ERROR_PREFIX}No data found for ticker TEST" in result.output
+        assert result.exit_code == constants.EXIT_ERROR  # CLI returns 1 on Abort
+        assert f"{test_constants.TestErrorMessages.ERROR_PREFIX}No data found for ticker TEST" in result.output
 
     def test_cli_requires_ticker_argument(self, runner: CliRunner) -> None:
         """Test that CLI requires a ticker argument."""
-        result = runner.invoke(main, [])
+        result = runner.invoke(cli.main, [])
 
         # Click returns exit code 2 for missing required arguments
-        assert result.exit_code == EXIT_USAGE_ERROR
-        assert MISSING_TICKER_ERROR in result.output
+        assert result.exit_code == constants.EXIT_USAGE_ERROR
+        assert test_constants.TestErrorMessages.MISSING_TICKER in result.output
 
     @patch("heisenbux.plot.save_plot")
     @patch("heisenbux.finance.get_ticker_data")
@@ -110,8 +109,8 @@ class TestCLI:
         """Test that CLI converts ticker to uppercase."""
         mock_get_ticker.return_value = mock_data
 
-        result = runner.invoke(main, [TEST_TICKER_AAPL_LOWER])
+        result = runner.invoke(cli.main, [test_constants.TestTickers.AAPL_LOWER])
 
         assert result.exit_code == 0
-        mock_get_ticker.assert_called_once_with(TEST_TICKER_AAPL_LOWER, False)
-        mock_plot.assert_called_once_with(mock_data, TEST_TICKER_AAPL_LOWER)
+        mock_get_ticker.assert_called_once_with(test_constants.TestTickers.AAPL_LOWER, False)
+        mock_plot.assert_called_once_with(mock_data, test_constants.TestTickers.AAPL_LOWER)

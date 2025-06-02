@@ -4,58 +4,40 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 
-from heisenbux.constants import (
-    CLOSE_COLUMN,
-    DATE_COLUMN,
-    HIGH_COLUMN,
-    LOW_COLUMN,
-    OPEN_COLUMN,
-    VOLUME_COLUMN,
-)
-from tests.constants import (
-    SAMPLE_BASE_CLOSE,
-    SAMPLE_BASE_HIGH,
-    SAMPLE_BASE_LOW,
-    SAMPLE_BASE_OPEN,
-    SAMPLE_BASE_VOLUME,
-    SAMPLE_DATE_FREQUENCY,
-    SAMPLE_DAYS_LOOKBACK,
-    SAMPLE_VALUE_INCREMENT,
-    SAMPLE_VOLUME_INCREMENT,
-    TEST_TICKER_TEST,
-)
+from heisenbux import constants
+from tests import constants as test_constants
 
 
 def create_sample_dataframe() -> pd.DataFrame:
     """Create a sample DataFrame with stock data for testing."""
     dates = pd.date_range(
-        start=datetime.now() - timedelta(days=SAMPLE_DAYS_LOOKBACK),
+        start=datetime.now() - timedelta(days=test_constants.SAMPLE_DAYS_LOOKBACK),
         end=datetime.now(),
-        freq=SAMPLE_DATE_FREQUENCY,
+        freq=test_constants.SAMPLE_DATE_FREQUENCY,
     )
 
     data = {
-        OPEN_COLUMN: [
-            SAMPLE_BASE_OPEN + i * SAMPLE_VALUE_INCREMENT for i in range(len(dates))
+        constants.DataFrameColumns.OPEN: [
+            test_constants.SAMPLE_BASE_OPEN + i * test_constants.SAMPLE_VALUE_INCREMENT for i in range(len(dates))
         ],
-        HIGH_COLUMN: [
-            SAMPLE_BASE_HIGH + i * SAMPLE_VALUE_INCREMENT for i in range(len(dates))
+        constants.DataFrameColumns.HIGH: [
+            test_constants.SAMPLE_BASE_HIGH + i * test_constants.SAMPLE_VALUE_INCREMENT for i in range(len(dates))
         ],
-        LOW_COLUMN: [
-            SAMPLE_BASE_LOW + i * SAMPLE_VALUE_INCREMENT for i in range(len(dates))
+        constants.DataFrameColumns.LOW: [
+            test_constants.SAMPLE_BASE_LOW + i * test_constants.SAMPLE_VALUE_INCREMENT for i in range(len(dates))
         ],
-        CLOSE_COLUMN: [
-            SAMPLE_BASE_CLOSE + i * SAMPLE_VALUE_INCREMENT for i in range(len(dates))
+        constants.DataFrameColumns.CLOSE: [
+            test_constants.SAMPLE_BASE_CLOSE + i * test_constants.SAMPLE_VALUE_INCREMENT for i in range(len(dates))
         ],
-        VOLUME_COLUMN: [
-            SAMPLE_BASE_VOLUME + i * SAMPLE_VOLUME_INCREMENT for i in range(len(dates))
+        constants.DataFrameColumns.VOLUME: [
+            test_constants.SAMPLE_BASE_VOLUME + i * test_constants.SAMPLE_VOLUME_INCREMENT for i in range(len(dates))
         ],
     }
 
     df = pd.DataFrame(data, index=dates)
-    df.index.name = DATE_COLUMN
+    df.index.name = constants.DataFrameColumns.DATE
     return df
 
 
-SAMPLE_TICKER = TEST_TICKER_TEST
+SAMPLE_TICKER = test_constants.TestTickers.TEST
 VANGUARD_TEST_FUNDS = ["VTI", "VXUS", "BND"]

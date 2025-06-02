@@ -6,17 +6,8 @@ from unittest.mock import Mock, patch
 import pandas as pd
 import pytest
 
-from heisenbux.constants import (
-    CLOSING_PRICES_TITLE_SUFFIX,
-    DATE_COLUMN,
-    FIGURE_SIZE,
-    GRAPHS_DIR,
-    PLOT_SUFFIX,
-    PRICE_USD_LABEL,
-    X_AXIS_ROTATION,
-)
-from heisenbux.plot import save_plot
-from tests.fixtures.sample_data import SAMPLE_TICKER, create_sample_dataframe
+from heisenbux import constants, plot
+from tests.fixtures import sample_data
 
 
 class TestSavePlot:
@@ -25,7 +16,7 @@ class TestSavePlot:
     @pytest.fixture
     def sample_df(self) -> pd.DataFrame:
         """Get sample DataFrame for testing."""
-        return create_sample_dataframe()
+        return sample_data.create_sample_dataframe()
 
     @patch("matplotlib.pyplot.savefig")
     @patch("matplotlib.pyplot.show")
@@ -34,18 +25,18 @@ class TestSavePlot:
         mock_show: Mock,
         mock_savefig: Mock,
         sample_df: pd.DataFrame,
-        temp_directory: Path,
+        tmp_path: Path,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         """Test that save_plot saves the plot file."""
-        monkeypatch.chdir(temp_directory)
+        monkeypatch.chdir(tmp_path)
 
-        save_plot(sample_df, SAMPLE_TICKER)
+        plot.save_plot(sample_df, sample_data.SAMPLE_TICKER)
 
         # Check that savefig was called
         mock_savefig.assert_called_once()
         save_args = mock_savefig.call_args[0]
-        expected_path = Path(GRAPHS_DIR) / f"{SAMPLE_TICKER}{PLOT_SUFFIX}"
+        expected_path = Path(constants.Directories.GRAPHS) / f"{sample_data.SAMPLE_TICKER}{constants.PLOT_SUFFIX}"
         assert save_args[0] == expected_path
 
         # Check that show was called
@@ -56,17 +47,17 @@ class TestSavePlot:
         self,
         mock_savefig: Mock,
         sample_df: pd.DataFrame,
-        temp_directory: Path,
+        tmp_path: Path,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         """Test that save_plot creates graphs directory if it doesn't exist."""
-        monkeypatch.chdir(temp_directory)
+        monkeypatch.chdir(tmp_path)
 
-        graphs_dir = Path(GRAPHS_DIR)
+        graphs_dir = Path(constants.Directories.GRAPHS)
         assert not graphs_dir.exists()
 
         with patch("matplotlib.pyplot.show"):
-            save_plot(sample_df, SAMPLE_TICKER)
+            plot.save_plot(sample_df, sample_data.SAMPLE_TICKER)
 
         assert graphs_dir.exists()
         assert graphs_dir.is_dir()
@@ -80,11 +71,11 @@ class TestSavePlot:
         mock_show: Mock,
         mock_figure: Mock,
         sample_df: pd.DataFrame,
-        temp_directory: Path,
+        tmp_path: Path,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         """Test that save_plot creates a plot with correct properties."""
-        monkeypatch.chdir(temp_directory)
+        monkeypatch.chdir(tmp_path)
 
         # Let other pyplot functions work normally
         with (
@@ -97,10 +88,10 @@ class TestSavePlot:
             patch("matplotlib.pyplot.xticks") as mock_xticks,
             patch("matplotlib.pyplot.tight_layout") as mock_tight_layout,
         ):
-            save_plot(sample_df, SAMPLE_TICKER)
+            plot.save_plot(sample_df, sample_data.SAMPLE_TICKER)
 
         # Check that figure was created with correct size
-        mock_figure.assert_called_once_with(figsize=FIGURE_SIZE)
+        mock_figure.assert_called_once_with(figsize=constants.FIGURE_SIZE)
 
         # Check that plot was called with correct data
         mock_plot.assert_called_once()
@@ -109,14 +100,14 @@ class TestSavePlot:
         assert len(plot_args[1]) == len(sample_df)  # y data (close prices)
 
         # Check labels and title
-        mock_xlabel.assert_called_once_with(DATE_COLUMN)
-        mock_ylabel.assert_called_once_with(PRICE_USD_LABEL)
+        mock_xlabel.assert_called_once_with(constants.DataFrameColumns.DATE)
+        mock_ylabel.assert_called_once_with(constants.PRICE_USD_LABEL)
         mock_title.assert_called_once_with(
-            f"{SAMPLE_TICKER.upper()}{CLOSING_PRICES_TITLE_SUFFIX}"
+            f"{sample_data.SAMPLE_TICKER.upper()}{constants.CLOSING_PRICES_TITLE_SUFFIX}"
         )
         mock_grid.assert_called_once_with(True)
         mock_legend.assert_called_once()
-        mock_xticks.assert_called_once_with(rotation=X_AXIS_ROTATION)
+        mock_xticks.assert_called_once_with(rotation=constants.X_AXIS_ROTATION)
         mock_tight_layout.assert_called_once()
 
     @patch("builtins.print")
@@ -128,14 +119,14 @@ class TestSavePlot:
         mock_savefig: Mock,
         mock_print: Mock,
         sample_df: pd.DataFrame,
-        temp_directory: Path,
+        tmp_path: Path,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         """Test that save_plot prints a message about where the plot was saved."""
-        monkeypatch.chdir(temp_directory)
+        monkeypatch.chdir(tmp_path)
 
-        save_plot(sample_df, SAMPLE_TICKER)
+        plot.save_plot(sample_df, sample_data.SAMPLE_TICKER)
 
         # Check that print was called with the save message
-        expected_path = Path(GRAPHS_DIR) / f"{SAMPLE_TICKER}{PLOT_SUFFIX}"
+        expected_path = Path(constants.Directories.GRAPHS) / f"{sample_data.SAMPLE_TICKER}{constants.PLOT_SUFFIX}"
         mock_print.assert_called_with(f"Plot saved to {expected_path}")

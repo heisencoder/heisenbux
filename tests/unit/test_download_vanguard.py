@@ -1,83 +1,70 @@
 """Unit tests for download_vanguard module."""
 
-import subprocess
-from unittest.mock import Mock, call, patch
+from unittest.mock import Mock, patch
 
+import click
 import pytest
 
-from heisenbux.constants import (
-    NO_FORCE_DOWNLOAD_FLAG,
-    NO_SHOW_PLOT_FLAG,
-    POETRY_RUN_HEISENBUX,
-    SHOW_PLOT_FLAG,
-)
-from heisenbux.download_vanguard import download_funds, generate_plots
-from tests.fixtures.sample_data import VANGUARD_TEST_FUNDS
+from heisenbux import download_vanguard
+from tests.fixtures import sample_data
 
 
 class TestDownloadVanguardFunds:
     """Test cases for download_vanguard functions."""
 
-    @patch("heisenbux.download_vanguard.subprocess.run")
+    @patch("heisenbux.download_vanguard._run_heisenbux_for_ticker")
     def test_download_funds(self, mock_run: Mock) -> None:
-        """Test that download_funds calls subprocess for each fund."""
-        download_funds(VANGUARD_TEST_FUNDS)
+        """Test that download_funds calls the heisenbux function for each fund."""
+        download_vanguard.download_funds(sample_data.VANGUARD_TEST_FUNDS)
 
-        # Check that subprocess was called for each fund
-        assert mock_run.call_count == len(VANGUARD_TEST_FUNDS)
+        # Check that the function was called for each fund
+        assert mock_run.call_count == len(sample_data.VANGUARD_TEST_FUNDS)
 
         # Check the calls were made with correct arguments
-        expected_calls = [
-            call([*POETRY_RUN_HEISENBUX, fund, NO_SHOW_PLOT_FLAG], check=True)
-            for fund in VANGUARD_TEST_FUNDS
-        ]
-        mock_run.assert_has_calls(expected_calls, any_order=False)
+        for fund in sample_data.VANGUARD_TEST_FUNDS:
+            mock_run.assert_any_call(fund, show_plot=False, force_download=False)
 
-    @patch("heisenbux.download_vanguard.subprocess.run")
+    @patch("heisenbux.download_vanguard._run_heisenbux_for_ticker")
     def test_generate_plots(self, mock_run: Mock) -> None:
-        """Test that generate_plots calls subprocess for each fund."""
-        generate_plots(VANGUARD_TEST_FUNDS)
+        """Test that generate_plots calls the heisenbux function for each fund."""
+        download_vanguard.generate_plots(sample_data.VANGUARD_TEST_FUNDS)
 
-        # Check that subprocess was called for each fund
-        assert mock_run.call_count == len(VANGUARD_TEST_FUNDS)
+        # Check that the function was called for each fund
+        assert mock_run.call_count == len(sample_data.VANGUARD_TEST_FUNDS)
 
         # Check the calls were made with correct arguments
-        expected_calls = [
-            call(
-                [*POETRY_RUN_HEISENBUX, fund, NO_FORCE_DOWNLOAD_FLAG, SHOW_PLOT_FLAG],
-                check=True,
-            )
-            for fund in VANGUARD_TEST_FUNDS
-        ]
-        mock_run.assert_has_calls(expected_calls, any_order=False)
+        for fund in sample_data.VANGUARD_TEST_FUNDS:
+            mock_run.assert_any_call(fund, show_plot=True, force_download=False)
 
-    @patch("heisenbux.download_vanguard.subprocess.run")
+    @patch("heisenbux.download_vanguard._run_heisenbux_for_ticker")
     @patch("builtins.print")
     def test_download_funds_prints_progress(
         self, mock_print: Mock, mock_run: Mock
     ) -> None:
         """Test that download_funds prints progress messages."""
-        download_funds(["VTI"])
+        download_vanguard.download_funds(["VTI"])
 
         # Check that progress message was printed
         mock_print.assert_called_with("\nDownloading data for VTI...")
 
-    @patch("heisenbux.download_vanguard.subprocess.run")
+    @patch("heisenbux.download_vanguard._run_heisenbux_for_ticker")
     @patch("builtins.print")
     def test_generate_plots_prints_progress(
         self, mock_print: Mock, mock_run: Mock
     ) -> None:
         """Test that generate_plots prints progress messages."""
-        generate_plots(["VTI"])
+        download_vanguard.generate_plots(["VTI"])
 
         # Check that progress message was printed
         mock_print.assert_called_with("\nGenerating plot for VTI...")
 
-    @patch("heisenbux.download_vanguard.subprocess.run")
-    def test_subprocess_failure_propagates(self, mock_run: Mock) -> None:
-        """Test that subprocess failures are propagated."""
-        mock_run.side_effect = subprocess.CalledProcessError(1, "heisenbux")
+    @patch("heisenbux.cli.main")
+    def test_run_heisenbux_for_ticker_failure(self, mock_main: Mock) -> None:
+        """Test that CLI failures are handled gracefully."""
+        mock_main.side_effect = click.Abort()
 
-        # The function should raise the exception
-        with pytest.raises(subprocess.CalledProcessError):
-            download_funds(["VTI"])
+        # The function should handle the exception gracefully
+        download_vanguard._run_heisenbux_for_ticker("VTI", show_plot=False, force_download=False)
+        
+        # The main function should have been called
+        mock_main.assert_called_once_with(standalone_mode=False)

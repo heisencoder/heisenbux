@@ -73,6 +73,7 @@ make security                    # Security checks
 - Avoid duplication in tests. Scan tests for similar patterns and create test fixtures and helper functions to encapsulate this duplication.
 - Never catch overly broad exceptions like `Exception`. Catch specific exceptions or let them propagate.
 - Always put import statements at the top of the file, after the module docstring but before any other code.
+- Do not import functions or constants directly. Instead import modules and classes. Use aliases if two or more imports reference a module with the same name or if there is an industry-standard abbreviation (e.g., `import pandas as pd`).
 
 ## Important Conventions
 
