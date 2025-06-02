@@ -1,13 +1,13 @@
 """Script to download data for popular Vanguard funds."""
 
-import subprocess
+import subprocess  # nosec B404
 
 
 def download_funds(funds: list[str]) -> None:
     """Download data for a list of Vanguard funds."""
     for fund in funds:
         print(f"\nDownloading data for {fund}...")
-        subprocess.run(
+        subprocess.run(  # nosec B603, B607
             ["poetry", "run", "heisenbux", fund, "--no-show-plot"], check=True
         )
 
@@ -16,7 +16,7 @@ def generate_plots(funds: list[str]) -> None:
     """Generate plots for a list of Vanguard funds."""
     for fund in funds:
         print(f"\nGenerating plot for {fund}...")
-        subprocess.run(
+        subprocess.run(  # nosec B603, B607
             ["poetry", "run", "heisenbux", fund, "--no-force-download", "--show-plot"],
             check=True,
         )
