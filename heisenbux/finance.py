@@ -26,7 +26,9 @@ def get_ticker_data(ticker: str, force_download: bool = False) -> pd.DataFrame:
     cache_dir = directory_utils.ensure_directory_exists(constants.Directories.CACHE)
 
     # Check for cached data
-    cache_file = directory_utils.build_file_path(cache_dir, ticker, constants.FileExtensions.CSV)
+    cache_file = directory_utils.build_file_path(
+        cache_dir, ticker, constants.FileExtensions.CSV
+    )
 
     if cache_file.exists() and not force_download:
         print(f"Using cached data from {cache_file}")

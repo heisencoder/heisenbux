@@ -17,7 +17,11 @@ def save_plot(df: pd.DataFrame, ticker: str) -> None:
 
     # Create and display the plot
     pyplot.figure(figsize=constants.FIGURE_SIZE)
-    pyplot.plot(df.index, df[constants.DataFrameColumns.CLOSE], label=constants.CLOSING_PRICE_LABEL)
+    pyplot.plot(
+        df.index,
+        df[constants.DataFrameColumns.CLOSE],
+        label=constants.CLOSING_PRICE_LABEL,
+    )
     pyplot.title(f"{ticker.upper()}{constants.CLOSING_PRICES_TITLE_SUFFIX}")
     pyplot.xlabel(constants.DataFrameColumns.DATE)
     pyplot.ylabel(constants.PRICE_USD_LABEL)
@@ -29,7 +33,9 @@ def save_plot(df: pd.DataFrame, ticker: str) -> None:
     pyplot.tight_layout()
 
     # Save the plot to graphs directory
-    plot_file = directory_utils.build_file_path(graphs_dir, ticker, constants.PLOT_SUFFIX)
+    plot_file = directory_utils.build_file_path(
+        graphs_dir, ticker, constants.PLOT_SUFFIX
+    )
     pyplot.savefig(plot_file)
     print(f"Plot saved to {plot_file}")
 

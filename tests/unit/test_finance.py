@@ -7,7 +7,8 @@ import pandas as pd
 import pytest
 
 from heisenbux import constants, finance
-from tests import constants as test_constants, helpers
+from tests import constants as test_constants
+from tests import helpers
 from tests.fixtures import sample_data
 
 
@@ -31,7 +32,11 @@ class TestGetTickerData:
         helpers.assert_valid_dataframe(df, constants.ALL_PRICE_COLUMNS)
 
         # Check that cache file was created
-        cache_file = tmp_path / constants.Directories.CACHE / f"{sample_data.SAMPLE_TICKER}{constants.FileExtensions.CSV}"
+        cache_file = (
+            tmp_path
+            / constants.Directories.CACHE
+            / f"{sample_data.SAMPLE_TICKER}{constants.FileExtensions.CSV}"
+        )
         assert cache_file.exists()
 
     def test_get_ticker_data_uses_cache(
@@ -43,7 +48,9 @@ class TestGetTickerData:
         # Create cache directory and file
         cache_dir = tmp_path / constants.Directories.CACHE
         cache_dir.mkdir()
-        cache_file = cache_dir / f"{sample_data.SAMPLE_TICKER}{constants.FileExtensions.CSV}"
+        cache_file = (
+            cache_dir / f"{sample_data.SAMPLE_TICKER}{constants.FileExtensions.CSV}"
+        )
 
         # Save sample data to cache
         sample_df = sample_data.create_sample_dataframe()
@@ -54,7 +61,9 @@ class TestGetTickerData:
             df = finance.get_ticker_data(sample_data.SAMPLE_TICKER)
 
         mock_ticker.assert_not_called()
-        helpers.assert_valid_dataframe(df, constants.ALL_PRICE_COLUMNS, min_rows=len(sample_df))
+        helpers.assert_valid_dataframe(
+            df, constants.ALL_PRICE_COLUMNS, min_rows=len(sample_df)
+        )
 
     def test_get_ticker_data_force_download(
         self, mock_yfinance: Mock, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
@@ -65,19 +74,25 @@ class TestGetTickerData:
         # Create cache directory and file
         cache_dir = tmp_path / constants.Directories.CACHE
         cache_dir.mkdir()
-        cache_file = cache_dir / f"{sample_data.SAMPLE_TICKER}{constants.FileExtensions.CSV}"
+        cache_file = (
+            cache_dir / f"{sample_data.SAMPLE_TICKER}{constants.FileExtensions.CSV}"
+        )
 
         # Save old data to cache
         old_df = pd.DataFrame(
             {constants.DataFrameColumns.CLOSE: [1, 2, 3]},
-            index=pd.date_range(test_constants.TEST_DATE_2020, periods=test_constants.TEST_PERIODS),
+            index=pd.date_range(
+                test_constants.TEST_DATE_2020, periods=test_constants.TEST_PERIODS
+            ),
         )
         old_df.to_csv(cache_file)
 
         with patch("yfinance.Ticker", return_value=mock_yfinance):
             df = finance.get_ticker_data(sample_data.SAMPLE_TICKER, force_download=True)
 
-        helpers.assert_valid_dataframe(df, constants.ALL_PRICE_COLUMNS, min_rows=test_constants.TEST_PERIODS + 1)
+        helpers.assert_valid_dataframe(
+            df, constants.ALL_PRICE_COLUMNS, min_rows=test_constants.TEST_PERIODS + 1
+        )
 
     def test_get_ticker_data_handles_download_error(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch

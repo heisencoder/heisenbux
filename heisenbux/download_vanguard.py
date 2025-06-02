@@ -7,7 +7,9 @@ import click
 from heisenbux import cli, constants
 
 
-def _run_heisenbux_for_ticker(ticker: str, show_plot: bool = True, force_download: bool = False) -> None:
+def _run_heisenbux_for_ticker(
+    ticker: str, show_plot: bool = True, force_download: bool = False
+) -> None:
     """Run heisenbux for a specific ticker.
 
     Args:
@@ -24,7 +26,7 @@ def _run_heisenbux_for_ticker(ticker: str, show_plot: bool = True, force_downloa
             args.append(constants.CLIOptions.NO_SHOW_PLOT)
         if force_download:
             args.append(constants.CLIOptions.FORCE_DOWNLOAD)
-        
+
         sys.argv = args
         cli.main(standalone_mode=False)
     except (SystemExit, click.Abort):

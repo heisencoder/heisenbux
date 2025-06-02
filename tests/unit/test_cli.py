@@ -72,7 +72,9 @@ class TestCLI:
         """Test that --force-download option works correctly."""
         mock_get_ticker.return_value = mock_data
 
-        result = runner.invoke(cli.main, [sample_data.SAMPLE_TICKER, "--force-download"])
+        result = runner.invoke(
+            cli.main, [sample_data.SAMPLE_TICKER, "--force-download"]
+        )
 
         assert result.exit_code == 0
         mock_get_ticker.assert_called_once_with(sample_data.SAMPLE_TICKER, True)
@@ -87,7 +89,11 @@ class TestCLI:
         result = runner.invoke(cli.main, [sample_data.SAMPLE_TICKER])
 
         assert result.exit_code == constants.EXIT_ERROR  # CLI returns 1 on Abort
-        assert f"{test_constants.TestErrorMessages.ERROR_PREFIX}No data found for ticker TEST" in result.output
+        assert (
+            f"{test_constants.TestErrorMessages.ERROR_PREFIX}"
+            "No data found for ticker TEST"
+            in result.output
+        )
 
     def test_cli_requires_ticker_argument(self, runner: CliRunner) -> None:
         """Test that CLI requires a ticker argument."""
@@ -112,5 +118,9 @@ class TestCLI:
         result = runner.invoke(cli.main, [test_constants.TestTickers.AAPL_LOWER])
 
         assert result.exit_code == 0
-        mock_get_ticker.assert_called_once_with(test_constants.TestTickers.AAPL_LOWER, False)
-        mock_plot.assert_called_once_with(mock_data, test_constants.TestTickers.AAPL_LOWER)
+        mock_get_ticker.assert_called_once_with(
+            test_constants.TestTickers.AAPL_LOWER, False
+        )
+        mock_plot.assert_called_once_with(
+            mock_data, test_constants.TestTickers.AAPL_LOWER
+        )

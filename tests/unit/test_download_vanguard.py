@@ -3,7 +3,6 @@
 from unittest.mock import Mock, patch
 
 import click
-import pytest
 
 from heisenbux import download_vanguard
 from tests.fixtures import sample_data
@@ -64,7 +63,9 @@ class TestDownloadVanguardFunds:
         mock_main.side_effect = click.Abort()
 
         # The function should handle the exception gracefully
-        download_vanguard._run_heisenbux_for_ticker("VTI", show_plot=False, force_download=False)
-        
+        download_vanguard._run_heisenbux_for_ticker(
+            "VTI", show_plot=False, force_download=False
+        )
+
         # The main function should have been called
         mock_main.assert_called_once_with(standalone_mode=False)

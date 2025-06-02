@@ -36,7 +36,10 @@ class TestSavePlot:
         # Check that savefig was called
         mock_savefig.assert_called_once()
         save_args = mock_savefig.call_args[0]
-        expected_path = Path(constants.Directories.GRAPHS) / f"{sample_data.SAMPLE_TICKER}{constants.PLOT_SUFFIX}"
+        expected_path = (
+            Path(constants.Directories.GRAPHS)
+            / f"{sample_data.SAMPLE_TICKER}{constants.PLOT_SUFFIX}"
+        )
         assert save_args[0] == expected_path
 
         # Check that show was called
@@ -128,5 +131,8 @@ class TestSavePlot:
         plot.save_plot(sample_df, sample_data.SAMPLE_TICKER)
 
         # Check that print was called with the save message
-        expected_path = Path(constants.Directories.GRAPHS) / f"{sample_data.SAMPLE_TICKER}{constants.PLOT_SUFFIX}"
+        expected_path = (
+            Path(constants.Directories.GRAPHS)
+            / f"{sample_data.SAMPLE_TICKER}{constants.PLOT_SUFFIX}"
+        )
         mock_print.assert_called_with(f"Plot saved to {expected_path}")
