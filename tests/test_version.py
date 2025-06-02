@@ -8,7 +8,7 @@ def test_version() -> None:
     import re
 
     # Version should match semantic versioning format
-    version_pattern = r'^\d+\.\d+\.\d+$'
-    assert re.match(version_pattern, __version__), (
-        f"Version '{__version__}' does not match X.Y.Z format"
-    )
+    version_pattern = r"^\d+\.\d+\.\d+$"
+    assert re.match(
+        version_pattern, __version__
+    ), f"Version '{__version__}' does not match X.Y.Z format"
