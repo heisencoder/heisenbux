@@ -11,8 +11,7 @@ from tests import constants as test_constants
 def create_sample_dataframe() -> pd.DataFrame:
     """Create a sample DataFrame with stock data for testing."""
     dates = pd.date_range(
-        start=datetime.now()
-        - timedelta(days=test_constants.SAMPLE_DAYS_LOOKBACK),
+        start=datetime.now() - timedelta(days=test_constants.SAMPLE_DAYS_LOOKBACK),
         end=datetime.now(),
         freq=test_constants.SAMPLE_DATE_FREQUENCY,
     )

@@ -5,18 +5,21 @@ from enum import StrEnum
 
 class Directories(StrEnum):
     """Directory paths used in the application."""
+
     CACHE = "cache"
     GRAPHS = "graphs"
 
 
 class FileExtensions(StrEnum):
     """File extensions used in the application."""
+
     CSV = ".csv"
     PNG = ".png"
 
 
 class DataFrameColumns(StrEnum):
     """DataFrame column names for stock data."""
+
     CLOSE = "Close"
     OPEN = "Open"
     HIGH = "High"
@@ -27,6 +30,7 @@ class DataFrameColumns(StrEnum):
 
 class CLIOptions(StrEnum):
     """Command-line interface options."""
+
     NO_SHOW_PLOT = "--no-show-plot"
     NO_FORCE_DOWNLOAD = "--no-force-download"
     SHOW_PLOT = "--show-plot"

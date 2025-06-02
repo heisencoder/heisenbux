@@ -91,8 +91,7 @@ class TestCLI:
         assert result.exit_code == constants.EXIT_ERROR  # CLI returns 1 on Abort
         assert (
             f"{test_constants.TestErrorMessages.ERROR_PREFIX}"
-            "No data found for ticker TEST"
-            in result.output
+            "No data found for ticker TEST" in result.output
         )
 
     def test_cli_requires_ticker_argument(self, runner: CliRunner) -> None:

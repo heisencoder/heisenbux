@@ -5,6 +5,7 @@ from enum import StrEnum
 
 class TestTickers(StrEnum):
     """Test ticker symbols."""
+
     AAPL = "AAPL"
     AAPL_LOWER = "aapl"
     TEST = "TEST"
@@ -12,6 +13,7 @@ class TestTickers(StrEnum):
 
 class TestErrorMessages(StrEnum):
     """Expected error message patterns."""
+
     ERROR_PREFIX = "Error: "
     MISSING_TICKER = "Missing argument 'TICKER'"
 
