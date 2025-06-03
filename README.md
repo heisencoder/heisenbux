@@ -38,23 +38,49 @@ This package uses Poetry for dependency management. To install:
 
 ## Development
 
-To run tests:
+### Running Tests
+
+To run the full test suite with all checks (matching CI):
 
 ```bash
-poetry run pytest
+# Using taskipy (recommended)
+poetry run task check-all
+
+# Using make
+make check-all
+
+# Using script
+./scripts/check_all.sh
 ```
 
-To run code formatting and quality checks:
+To run individual checks:
 
 ```bash
-# Check for issues
-poetry run ruff check .
+# Run tests with coverage
+poetry run task test
 
-# Fix automatically fixable issues
-poetry run ruff check . --fix
+# Run linting
+poetry run task lint
 
-# Format code
-poetry run ruff format .
+# Check code formatting
+poetry run task format-check
+
+# Run type checking
+poetry run task type-check
+
+# Run security checks
+poetry run task security
+
+# Auto-fix issues and format code
+poetry run task fix
+```
+
+### Quick Test Commands
+
+```bash
+poetry run pytest              # Basic test run
+poetry run pytest -xvs         # Stop on first failure, verbose
+poetry run pytest -k "test_name"  # Run specific test
 ```
 
 ## License

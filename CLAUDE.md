@@ -29,12 +29,26 @@ poetry run heisenbux TICKER --no-show-plot  # Download without display
 poetry run heisenbux TICKER --force-download  # Force fresh download
 
 # Run tests
-poetry run pytest
+poetry run pytest                # Basic test run
+poetry run task test             # Test with coverage
+poetry run task check-all        # Run all CI checks locally
 
-# Linting and formatting
-poetry run ruff check .          # Check for issues
-poetry run ruff check . --fix    # Auto-fix issues
-poetry run ruff format .         # Format code
+# Individual checks (using taskipy)
+poetry run task lint             # Check for linting issues
+poetry run task format-check     # Check code formatting
+poetry run task type-check       # Run mypy type checking
+poetry run task security         # Run security checks
+poetry run task fix              # Auto-fix issues and format
+
+# Alternative: Using make
+make check-all                   # Run all CI checks
+make test                        # Test with coverage
+make lint                        # Linting
+make type-check                  # Type checking
+make security                    # Security checks
+
+# Alternative: Direct script
+./scripts/check_all.sh           # Run all checks like CI
 ```
 
 ### Claude development methodology
@@ -57,10 +71,13 @@ poetry run ruff format .         # Format code
 - Do not use string or numeric literals. Instead, use constants, enums, or similar structures. If a given constant is used in two or more Python modules, then extract this constant into a separate module that only contains constants, enums, and similar configuration.
 - Do not duplicate important business logic. Instead, extract this common business logic into helper functions.
 - Avoid duplication in tests. Scan tests for similar patterns and create test fixtures and helper functions to encapsulate this duplication.
+- Never catch overly broad exceptions like `Exception`. Catch specific exceptions or let them propagate.
+- Always put import statements at the top of the file, after the module docstring but before any other code.
+- Do not import functions or constants directly. Instead import modules and classes. Use aliases if two or more imports reference a module with the same name or if there is an industry-standard abbreviation (e.g., `import pandas as pd`).
 
 ## Important Conventions
 
-- **Python Version**: 3.11+
+- **Python Version**: 3.12+
 - **Package Manager**: Poetry
 - **Code Style**:
   - Python: Follow the [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html)
@@ -71,4 +88,7 @@ poetry run ruff format .         # Format code
 - **Import Style**: isort-compatible
 - **Data Storage**: CSV files in `cache/`, PNG plots in `graphs/`
 - **API**: Uses yfinance for market data (365 days historical by default)
-- **Typing Annotations**: Add typing annotations to function signatures
+- **Type Annotations**: 
+  - Always annotate: Function signatures (parameters and return types), class attributes, module-level variables
+  - Sometimes annotate: Empty collections (e.g., `items: list[str] = []`), ambiguous `None` types (e.g., `result: str | None = None`)
+  - Rarely annotate: Local variables with obvious types (mypy can infer most local variable types)
