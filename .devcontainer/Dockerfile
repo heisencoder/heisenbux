@@ -19,7 +19,12 @@ RUN apt update && apt install -y less \
   iproute2 \
   dnsutils \
   aggregate \
-  jq
+  jq \
+  python3.12 \
+  python3.12-venv \
+  python3.12-dev \
+  python3-pip \
+  curl
 
 # Ensure default node user has access to /usr/local/share
 RUN mkdir -p /usr/local/share/npm-global && \
@@ -68,6 +73,13 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
 
 # Install Claude
 RUN npm install -g @anthropic-ai/claude-code
+
+# Install Poetry for Python package management
+USER root
+RUN curl -sSL https://install.python-poetry.org | python3.12 - && \
+    ln -s /root/.local/bin/poetry /usr/local/bin/poetry && \
+    poetry config virtualenvs.create false
+USER node
 
 # Copy and set up firewall script
 COPY init-firewall.sh /usr/local/bin/
