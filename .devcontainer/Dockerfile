@@ -1,4 +1,8 @@
-FROM node:20
+# See https://github.com/anthropics/claude-code/tree/main/.devcontainer
+# This Dockerfile is based on the version used in the Claude Code repository.
+# It has been modified to support Python 3.12 and to include additional tools.
+
+FROM node:24
 
 ARG TZ
 ENV TZ="$TZ"
@@ -20,9 +24,9 @@ RUN apt update && apt install -y less \
   dnsutils \
   aggregate \
   jq \
-  python3.12 \
-  python3.12-venv \
-  python3.12-dev \
+  python3 \
+  python3-venv \
+  python3-dev \
   python3-pip \
   curl
 
@@ -75,9 +79,9 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
 RUN npm install -g @anthropic-ai/claude-code
 
 # Install Poetry for Python package management
+RUN curl -sSL https://install.python-poetry.org | python3 -
 USER root
-RUN curl -sSL https://install.python-poetry.org | python3.12 - && \
-    ln -s /root/.local/bin/poetry /usr/local/bin/poetry && \
+RUN ln -s /home/node/.local/bin/poetry /usr/local/bin/poetry && \
     poetry config virtualenvs.create false
 USER node
 

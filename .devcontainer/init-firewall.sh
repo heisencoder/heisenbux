@@ -51,6 +51,7 @@ while read -r cidr; do
 done < <(echo "$gh_ranges" | jq -r '(.web + .api + .git)[]' | aggregate -q)
 
 # Resolve and add other allowed domains
+# files.pythonhosted.org resolves to dualstack.python.map.fastly.net and is an alias for pypi.org
 for domain in \
     "registry.npmjs.org" \
     "api.anthropic.com" \
@@ -58,20 +59,15 @@ for domain in \
     "statsig.anthropic.com" \
     "statsig.com" \
     "pypi.org" \
-    "files.pythonhosted.org" \
     "install.python-poetry.org"; do
     echo "Resolving $domain..."
-    ips=$(dig +short A "$domain")
+    ips=$(dig +short A "$domain" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$')
     if [ -z "$ips" ]; then
         echo "ERROR: Failed to resolve $domain"
         exit 1
     fi
-    
+
     while read -r ip; do
-        if [[ ! "$ip" =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-            echo "ERROR: Invalid IP from DNS for $domain: $ip"
-            exit 1
-        fi
         echo "Adding $ip for $domain"
         ipset add allowed-domains "$ip"
     done < <(echo "$ips")
