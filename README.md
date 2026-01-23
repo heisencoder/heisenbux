@@ -83,6 +83,36 @@ poetry run pytest -xvs         # Stop on first failure, verbose
 poetry run pytest -k "test_name"  # Run specific test
 ```
 
+## Development Container Setup
+
+This project includes a [Dev Container](https://code.visualstudio.com/docs/devcontainers/containers) configuration for a reproducible development environment using VS Code.
+
+### Connecting to the Dev Container in VS Code
+
+1. **Install Prerequisites:**
+   - [Docker](https://docs.docker.com/get-docker/) (ensure Docker is running)
+   - [Visual Studio Code](https://code.visualstudio.com/)
+   - [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+
+2. **Open the Project in VS Code:**
+   - Open this project folder (`heisenbux`) in VS Code.
+
+3. **Reopen in Container:**
+   - Press <kbd>F1</kbd> (or <kbd>Ctrl+Shift+P</kbd>) to open the Command Palette.
+   - Type and select: **Dev Containers: Reopen in Container**
+   - VS Code will build the container using the `.devcontainer/devcontainer.json` configuration and connect your workspace.
+
+4. **Start Coding:**
+   - Once the container is ready, your workspace will be running inside the container with all specified extensions and settings.
+   - The terminal will use `zsh` by default.
+
+5. **Notes:**
+   - The container mounts your project folder at `/workspace`.
+   - Custom volumes are used for command history and Claude config.
+   - The container runs as the `node` user.
+
+For more details, see the [VS Code Dev Containers documentation](https://code.visualstudio.com/docs/devcontainers/containers).
+
 ## License
 
 This project is licensed under the MIT License.
